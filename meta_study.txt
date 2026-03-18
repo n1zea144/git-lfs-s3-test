@@ -1,0 +1,4 @@
+cancer_study_identifier: test_study
+name: Test Study
+description: A test study for LFS prototype
+type_of_cancer: mixed
