@@ -10,14 +10,14 @@ jobs:
     steps:
       - name: Get changed files
         id: changed
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 2
 
       - name: Build changed files list
         id: files
         run: |
-          FILES=$(git diff --name-only HEAD~1 HEAD | jq -R . | jq -s .)
+          FILES=$(git diff --name-only HEAD~1 HEAD | jq -R . | jq -s . | tr -d '\n')
           echo "changed_files=$FILES" >> $GITHUB_OUTPUT
 
       - name: Trigger snapshot Lambda
