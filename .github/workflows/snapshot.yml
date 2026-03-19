@@ -1,0 +1,33 @@
+name: Snapshot to S3 on merge
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get changed files
+        id: changed
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Build changed files list
+        id: files
+        run: |
+          # Get list of files changed in the merge commit
+          FILES=$(git diff --name-only HEAD~1 HEAD | jq -R . | jq -s .)
+          echo "changed_files=$FILES" >> $GITHUB_OUTPUT
+
+      - name: Trigger snapshot Lambda
+        run: |
+          curl -X POST ${{ secrets.SNAPSHOT_LAMBDA_URL }} \
+            -H "Content-Type: application/json" \
+            -d '{
+              "repo": "cBioPortal/datahub",
+              "ref": "master",
+              "token": "${{ secrets.GITHUB_TOKEN }}",
+              "changed_files": ${{ steps.files.outputs.changed_files }}
+            }'
