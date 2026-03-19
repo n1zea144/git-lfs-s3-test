@@ -17,7 +17,6 @@ jobs:
       - name: Build changed files list
         id: files
         run: |
-          # Get list of files changed in the merge commit
           FILES=$(git diff --name-only HEAD~1 HEAD | jq -R . | jq -s .)
           echo "changed_files=$FILES" >> $GITHUB_OUTPUT
 
@@ -26,8 +25,8 @@ jobs:
           curl -X POST ${{ secrets.SNAPSHOT_LAMBDA_URL }} \
             -H "Content-Type: application/json" \
             -d '{
-              "repo": "cBioPortal/datahub",
-              "ref": "master",
+              "repo": "${{ github.repository }}",
+              "ref": "${{ github.ref_name }}",
               "token": "${{ secrets.GITHUB_TOKEN }}",
               "changed_files": ${{ steps.files.outputs.changed_files }}
             }'
