@@ -4,3 +4,4 @@ description: A test study for LFS prototype
 type_of_cancer: mixed
 testing github action trigger
 testing github action trigger - second try
+snapshot action test
